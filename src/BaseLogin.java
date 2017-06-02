@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.URL;
@@ -19,12 +16,13 @@ public class BaseLogin {
     private List<String> cookies;
     private HttpsURLConnection conn;
 
-    private final String USER_AGENT = "Mozilla/5.0";
+    //прикидываемся браузером
+    private final String USER_AGENT = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 OPR/45.0.2552.888";
 
     public static void main(String[] args) throws Exception {
 
-        String url = "https://accounts.google.com/ServiceLoginAuth";
-        String gmail = "https://mail.google.com/mail/";
+        String url = "https://base.freshit.ua/auth/user/login/";
+        String base = "https://base.freshit.ua";
 
         BaseLogin http = new BaseLogin();
 
@@ -33,15 +31,17 @@ public class BaseLogin {
 
         // 1. Send a "GET" request, so that you can extract the form's data.
         String page = http.GetPageContent(url);
-        String postParams = http.getFormParams(page, "username@gmail.com", "password");
+        String postParams = http.getFormParams(page, "s3virge", "IloveCPP");
 
         // 2. Construct above post's content and then send a POST request for
         // authentication
         http.sendPost(url, postParams);
 
-        // 3. success then go to gmail.
-        String result = http.GetPageContent(gmail);
-        System.out.println(result);
+        // 3. success then go to base.
+        String result = http.GetPageContent(base);
+
+        //System.out.println(result);
+        WriteFile(result, "base.html");
     }
 
     private void sendPost(String url, String postParams) throws Exception {
@@ -61,7 +61,7 @@ public class BaseLogin {
             conn.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
         }
         conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestProperty("Referer", "https://accounts.google.com/ServiceLoginAuth");
+        conn.setRequestProperty("Referer", "https://www.google.com.ua/");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setRequestProperty("Content-Length", Integer.toString(postParams.length()));
 
@@ -87,9 +87,10 @@ public class BaseLogin {
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
-        in.close();
-        // System.out.println(response.toString());
 
+        in.close();
+
+        System.out.println(response.toString());
     }
 
     private String GetPageContent(String url) throws Exception {
@@ -143,7 +144,7 @@ public class BaseLogin {
         Document doc = Jsoup.parse(html);
 
         //находим в документе форму с нужным ID
-        Element loginform = doc.getElementById("gaia_loginform");
+        Element loginform = doc.getElementById("auth");
         //находим на форме поля ввода
         Elements inputElements = loginform.getElementsByTag("input");
         List<String> paramList = new ArrayList<String>();
@@ -153,9 +154,9 @@ public class BaseLogin {
             String key = inputElement.attr("name");
             String value = inputElement.attr("value");
 
-            if (key.equals("Email"))
+            if (key.equals("login"))
                 value = username;
-            else if (key.equals("Passwd"))
+            else if (key.equals("pwd"))
                 value = password;
 
             paramList.add(key + "=" + URLEncoder.encode(value, "UTF-8"));
@@ -180,6 +181,19 @@ public class BaseLogin {
 
     public void setCookies(List<String> cookies) {
         this.cookies = cookies;
+    }
+
+    private static void WriteFile(String whatToWrite, String whereToWrite) {
+        try {
+            FileWriter file = new FileWriter(whereToWrite);
+
+            file.write(whatToWrite);
+            file.close();
+        }
+        catch (IOException ex) {
+            System.out.println("An error occurred while writing the file " + whereToWrite);
+            System.out.println(ex);
+        }
     }
 
 }
