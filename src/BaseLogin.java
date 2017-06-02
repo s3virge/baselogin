@@ -1,7 +1,3 @@
-/**
- * Created by s3virge on 01.06.17.
- */
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -27,8 +23,8 @@ public class BaseLogin {
 
     public static void main(String[] args) throws Exception {
 
-        String url = "https://base.freshit.ua";
-        String gmail = "";
+        String url = "https://accounts.google.com/ServiceLoginAuth";
+        String gmail = "https://mail.google.com/mail/";
 
         BaseLogin http = new BaseLogin();
 
@@ -58,13 +54,12 @@ public class BaseLogin {
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Host", "accounts.google.com");
         conn.setRequestProperty("User-Agent", USER_AGENT);
-        conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        conn.setRequestProperty("Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
         for (String cookie : this.cookies) {
             conn.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
         }
-
         conn.setRequestProperty("Connection", "keep-alive");
         conn.setRequestProperty("Referer", "https://accounts.google.com/ServiceLoginAuth");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -84,14 +79,14 @@ public class BaseLogin {
         System.out.println("Post parameters : " + postParams);
         System.out.println("Response Code : " + responseCode);
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader in =
+                new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
 
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
-
         in.close();
         // System.out.println(response.toString());
 
@@ -112,44 +107,48 @@ public class BaseLogin {
         conn.setRequestProperty("Accept",
                 "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
         if (cookies != null) {
             for (String cookie : this.cookies) {
                 conn.addRequestProperty("Cookie", cookie.split(";", 1)[0]);
             }
         }
+
         int responseCode = conn.getResponseCode();
+
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
 
-        BufferedReader in =
-                new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
 
         while ((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
+
         in.close();
 
         // Get the response cookies
         setCookies(conn.getHeaderFields().get("Set-Cookie"));
 
         return response.toString();
-
     }
 
-    private String getFormParams(String html, String username, String password)
-            throws UnsupportedEncodingException
-    {
+    public String getFormParams(String html, String username, String password)
+            throws UnsupportedEncodingException {
 
         System.out.println("Extracting form's data...");
 
         Document doc = Jsoup.parse(html);
 
-        Element loginform = doc.getElementsByClass("no-ajax");
+        //находим в документе форму с нужным ID
+        Element loginform = doc.getElementById("gaia_loginform");
+        //находим на форме поля ввода
         Elements inputElements = loginform.getElementsByTag("input");
         List<String> paramList = new ArrayList<String>();
 
+        //получаем значения полей ввода
         for (Element inputElement : inputElements) {
             String key = inputElement.attr("name");
             String value = inputElement.attr("value");
@@ -168,8 +167,7 @@ public class BaseLogin {
         for (String param : paramList) {
             if (result.length() == 0) {
                 result.append(param);
-            }
-            else {
+            } else {
                 result.append("&" + param);
             }
         }
@@ -180,7 +178,7 @@ public class BaseLogin {
         return cookies;
     }
 
-    private void setCookies(List<String> cookies) {
+    public void setCookies(List<String> cookies) {
         this.cookies = cookies;
     }
 
