@@ -31,7 +31,7 @@ public class BaseLogin {
 
         // 1. Send a "GET" request, so that you can extract the form's data.
         String page = http.GetPageContent(url);
-        String postParams = http.getFormParams(page, "", "");
+        String postParams = http.getFormParams(page, "username", "userpassword");
 
         // 2. Construct above post's content and then send a POST request for
         // authentication
