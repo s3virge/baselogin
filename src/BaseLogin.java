@@ -16,6 +16,9 @@ public class BaseLogin {
     private List<String> cookies;
     private HttpsURLConnection conn;
 
+    private static final String login = "s3virge";
+    private static final String password = "IloveCPP";
+
     //прикидываемся браузером
     private final String USER_AGENT = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 OPR/45.0.2552.888";
 
@@ -31,7 +34,7 @@ public class BaseLogin {
 
         // 1. Send a "GET" request, so that you can extract the form's data.
         String page = http.GetPageContent(url);
-        String postParams = http.getFormParams(page, "username", "userpassword");
+        String postParams = http.getFormParams(page, login, password);
 
         // 2. Construct above post's content and then send a POST request for
         // authentication
@@ -40,8 +43,13 @@ public class BaseLogin {
         // 3. success then go to base.
         String result = http.GetPageContent(base);
 
+        ShowWindow(result);
         //System.out.println(result);
         WriteFile(result, "base.html");
+    }
+
+    private static void ShowWindow(String result){
+
     }
 
     private void sendPost(String url, String postParams) throws Exception {
@@ -136,7 +144,7 @@ public class BaseLogin {
         return response.toString();
     }
 
-    public String getFormParams(String html, String username, String password)
+    public String getFormParams(String html, String username, String pswrd)
             throws UnsupportedEncodingException {
 
         System.out.println("Extracting form's data...");
@@ -157,7 +165,7 @@ public class BaseLogin {
             if (key.equals("login"))
                 value = username;
             else if (key.equals("pwd"))
-                value = password;
+                value = pswrd;
 
             paramList.add(key + "=" + URLEncoder.encode(value, "UTF-8"));
         }
