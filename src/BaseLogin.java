@@ -43,13 +43,8 @@ public class BaseLogin {
         // 3. success then go to base.
         String result = http.GetPageContent(base);
 
-        ShowWindow(result);
         //System.out.println(result);
         WriteFile(result, "base.html");
-    }
-
-    private static void ShowWindow(String result){
-
     }
 
     private void sendPost(String url, String postParams) throws Exception {
