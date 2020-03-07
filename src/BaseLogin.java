@@ -17,7 +17,7 @@ public class BaseLogin {
     private HttpsURLConnection conn;
 
     private static final String login = "s3virge";
-    private static final String password = "IloveCPP";
+    private static final String password = "3151020
 
     //прикидываемся браузером
     private final String USER_AGENT = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 OPR/45.0.2552.888";
