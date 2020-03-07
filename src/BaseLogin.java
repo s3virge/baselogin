@@ -16,7 +16,7 @@ public class BaseLogin {
     private List<String> cookies;
     private HttpsURLConnection conn;
 
-    private static final String login = "s3virge";
+    private static final String login = "cas-12abl";
     private static final String password = "3151020
 
     //прикидываемся браузером
